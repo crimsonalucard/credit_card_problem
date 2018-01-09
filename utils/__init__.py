@@ -9,3 +9,7 @@ def compose(*args: Callable[[Any], Any]) -> Callable[[Any], Any]:
     if len(args) <= 0:
         return lambda x: x
     return lambda x: args[0](compose(*args[1:])(x))
+
+
+def id(x: Any, *args) -> Any:
+    return x

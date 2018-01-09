@@ -1,8 +1,7 @@
-from typing import NamedTuple, Callable, Any, List
+from typing import NamedTuple, List
 
-from monads.IO_monad import IO_monad, pass_io
+from monads.IO_monad import IO_monad
 from validators import card_pass_decorator, validate_number, validate_charge
-from functools import reduce
 
 COMMANDS = {
     "Add": lambda *args, **kwargs: add(*args, **kwargs),
@@ -16,19 +15,6 @@ class Card(NamedTuple):
     balance: int
     limit: int
     number: List[int]
-
-
-def parse_string_to_command(line: str) -> Callable[[], IO_monad]:
-    tokens = line.split(" ")
-    command = tokens[0]
-    args = tokens[1:]
-    if command in COMMANDS:
-        return lambda: COMMANDS[command](*args)
-    else:
-        return lambda: IO_monad()
-
-def execute_commands(list_of_commands: List[List[str]]) -> IO_monad:
-    return reduce(lambda acc, x: pass_io(acc, x), list_of_commands, IO_monad())
 
 
 def add(name: str, number: str, limit: str) -> IO_monad():
@@ -70,16 +56,5 @@ def credit_card(card: Card, amount: int) -> Card:
 
 def cart_to_string(card: Card) -> str:
     return "{0}: ${1}".format(card.name, card.balance)
-
-
-def id(x: Any, *args) -> Any:
-    return x
-
-
-# def guard_decorator(validator_func: Callable[..., bool]):
-#     return validate_decorator(validator_func, )
-
-def main() -> IO_monad:
-    pass
 
 
