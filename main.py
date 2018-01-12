@@ -1,60 +1,18 @@
-from typing import NamedTuple, List
+#!/usr/bin/env python3
 
-from monads.IO_monad import IO_monad
-from validators import card_pass_decorator, validate_number, validate_charge
-
-COMMANDS = {
-    "Add": lambda *args, **kwargs: add(*args, **kwargs),
-    "Charge": lambda *args, **kwargs: charge(*args, **kwargs),
-    "Credit": lambda *args, **kwargs: credit(*args, **kwargs)
-}
+from parsing import get_commands
+from state import get_state
+from display import state_to_str, print_state_string
+from utils import compose
 
 
-class Card(NamedTuple):
-    name: str
-    balance: int
-    limit: int
-    number: List[int]
+# IO
+def main() -> None:
+    for i in get_commands():
+        i()
+    compose(print_state_string, state_to_str, get_state)()
+    return None
 
 
-def add(name: str, number: str, limit: str) -> IO_monad():
-    card = create_card(name, [int(i) for i in number], int(limit[1:]))
-    global state
-    state[card.name] = card
-    return IO_monad()
-
-
-def charge(name: str, amount: str) -> IO_monad():
-    global state
-    card = state[name]
-    new_card = charge_card(card, int(amount[1:]))
-    state[name] = new_card
-    return IO_monad()
-
-
-def credit(name: str, amount: int) -> IO_monad():
-    global state
-    card = state[name]
-    new_card = credit_card(card, int(amount[1:]))
-    state[name] = new_card
-    return IO_monad()
-
-
-def create_card(name: str, number: List[int], limit: int, balance: int = 0) -> Card:
-    return Card(name=name, balance=balance, limit=limit, number=number)
-
-@card_pass_decorator(validate_number)
-def charge_card(card: Card, amount: int) -> Card:
-    return create_card(Card.name, Card.number, card.limit, Card.balance + amount)
-
-
-@card_pass_decorator(validate_number)
-@card_pass_decorator(validate_charge)
-def credit_card(card: Card, amount: int) -> Card:
-    return create_card(Card.name, Card.number, card.limit, Card.balance - amount)
-
-
-def cart_to_string(card: Card) -> str:
-    return "{0}: ${1}".format(card.name, card.balance)
-
-
+if __name__ == "__main__":
+    main()
