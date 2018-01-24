@@ -1,6 +1,6 @@
 from unittest import TestCase
 from utils import compose, string_to_list_of_strings, string_of_nums_to_list_of_ints, dollar_to_number
-from validators import validate_charge, validate_number, validate_decorator, card_pass_decorator
+from validators import validate_charge, validate_card, validate_decorator, card_pass_decorator
 from card import create_card, charge_card, credit_card
 from custrom_types import Card
 from state import state, add, charge, credit, get_card, set_card
@@ -31,17 +31,17 @@ class TestMain(TestCase):
         self.assertFalse(validate_charge(self.dummyCard, 5000))
 
     def test_luhn10_validation(self):
-        self.assertTrue(validate_number(self.tom))
-        self.assertTrue(validate_number(self.lisa))
-        self.assertFalse(validate_number(self.quincy))
-        self.assertTrue(validate_number(create_card("blah", string_of_nums_to_list_of_ints("49927398716"), 2000)))
+        self.assertTrue(validate_card(self.tom))
+        self.assertTrue(validate_card(self.lisa))
+        self.assertFalse(validate_card(self.quincy))
+        self.assertTrue(validate_card(create_card("blah", string_of_nums_to_list_of_ints("49927398716"), 2000)))
         test_cases = [4206478516190347, 4419983825796737, 4946298813581617, 2479385739857934857983]
         test_cases = [string_of_nums_to_list_of_ints(str(i)) for i in test_cases]
         for number in test_cases:
             if string_of_nums_to_list_of_ints(str(2479385739857934857983)) != number:
-                self.assertTrue(validate_number(create_card("blah", number, 2000)))
+                self.assertTrue(validate_card(create_card("blah", number, 2000)))
             else:
-                self.assertFalse(validate_number(create_card("blah", number, 2000)))
+                self.assertFalse(validate_card(create_card("blah", number, 2000)))
 
     def test_validate_decortator(self):
         id = lambda x: x
@@ -54,7 +54,7 @@ class TestMain(TestCase):
         self.assertEqual(test_func(False), -1)
 
     def test_card_pass_decorator(self):
-        @card_pass_decorator(validate_number)
+        @card_pass_decorator(validate_card)
         def test_func(card):
             return self.lisa
 

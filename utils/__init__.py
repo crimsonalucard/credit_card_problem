@@ -20,7 +20,7 @@ def get_file_from_stdin() -> IO:
     return sys.stdin
 
 #IO
-def get_file_from_string(string):
+def get_file_from_string(string) -> IO:
     return open(string)
 
 #IO

@@ -1,6 +1,6 @@
 from custrom_types import Card, State
 from utils import identity
-from validators import validate_decorator, validate_number
+from validators import validate_decorator, validate_card
 from typing import List
 from functools import reduce
 
@@ -8,7 +8,7 @@ def display_card_error(card: Card) -> str:
     return "{0}: error".format(card.name)
 
 
-@validate_decorator(validate_number, identity, display_card_error)
+@validate_decorator(validate_card, identity, display_card_error)
 def card_to_string(card: Card) -> str:
     return "{0}: ${1}".format(card.name, card.balance)
 
